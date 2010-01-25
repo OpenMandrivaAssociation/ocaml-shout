@@ -1,5 +1,5 @@
 Name:           ocaml-shout
-Version:        0.2.6
+Version:        0.2.7
 Release:        %mkrel 1
 Summary:        OCaml bindings for the shout library
 License:        GPL
