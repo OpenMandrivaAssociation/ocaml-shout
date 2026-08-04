@@ -1,6 +1,6 @@
 Name:           ocaml-shout
 Version:        0.2.7
-Release:        4
+Release:	5
 Summary:        OCaml bindings for the shout library
 License:        GPL
 Group:          Development/Other
@@ -35,6 +35,8 @@ developing applications that use %{name}.
 %setup -q
 
 %build
+export LDFLAGS=$(echo $LDFLAGS | sed "s/-Wl,--no-undefined//g")
+export CFLAGS="%{optflags}"
 ./configure
 make all opt
 make doc
@@ -64,15 +66,3 @@ make install
 %{_libdir}/ocaml/shout/*.cmxa
 %{_libdir}/ocaml/shout/*.cmx
 %{_libdir}/ocaml/shout/*.mli
-
-
-
-%changelog
-* Mon Jan 25 2010 Guillaume Rousse <guillomovitch@mandriva.org> 0.2.7-1mdv2010.1
-+ Revision: 496351
-- update to new version 0.2.7
-
-* Fri Sep 04 2009 Florent Monnier <blue_prawn@mandriva.org> 0.2.6-1mdv2010.0
-+ Revision: 430807
-- import ocaml-shout
-
