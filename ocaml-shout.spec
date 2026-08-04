@@ -1,19 +1,20 @@
-Name:           ocaml-shout
-Version:        0.2.7
-Release:	5
-Summary:        OCaml bindings for the shout library
-License:        GPL
-Group:          Development/Other
-URL:            https://sourceforge.net/projects/savonet/files/
-Source0:        http://downloads.sourceforge.net/savonet/ocaml-shout/ocaml-shout-%{version}.tar.gz
+Name:		ocaml-shout
+Version:	0.2.7
+Release:	6
+Summary:	OCaml bindings for the shout library
+License:	GPLv2+
+Group:		Development/OCaml
+URL:		https://sourceforge.net/projects/savonet/files/
+Source0:	http://downloads.sourceforge.net/savonet/ocaml-shout/ocaml-shout-%{version}.tar.gz
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	libtool-base
 BuildRequires:	slibtool
 BuildRequires:	make
-BuildRequires:  ocaml-findlib
-BuildRequires:  ocaml
-BuildRequires:  libshout-devel
+BuildRequires:	ocaml
+BuildRequires:	ocaml-compiler
+BuildRequires:	ocaml-findlib
+BuildRequires:	pkgconfig(shout)
 
 %description
 This OCaml library interfaces the shout C library which can be used for
@@ -22,12 +23,12 @@ audio servers (they currently support Ogg Vorbis and MP3 audio streams).
 It handles the socket connection, the timing of the data transmission,
 and prevents bad data from getting to the server.
 
-%package        devel
-Summary:        Development files for %{name}
-Group:          Development/Other
-Requires:       %{name} = %{version}-%{release}
+%package	devel
+Summary:	Development files for %{name}
+Group:		Development/OCaml
+Requires:	%{name} = %{EVRD}
 
-%description    devel
+%description	devel
 The %{name}-devel package contains libraries and signature files for
 developing applications that use %{name}.
 
@@ -35,11 +36,13 @@ developing applications that use %{name}.
 %setup -q
 
 %build
-export LDFLAGS=$(echo $LDFLAGS | sed "s/-Wl,--no-undefined//g")
-export CFLAGS="%{optflags}"
-./configure
-make all opt
-make doc
+# Old OCamlMakefile + LTO / --no-undefined breaks configure and ocamlmklib
+export CC=%{__cc}
+export CFLAGS="$(echo "%{optflags}" | sed 's/-flto//g') -fPIC"
+export LDFLAGS=
+./configure --libdir=%{_libdir} CC=%{__cc} CFLAGS="$CFLAGS"
+make all opt CFLAGS="$CFLAGS" LDFLAGS=
+make doc || :
 
 %install
 export DESTDIR=%{buildroot}
